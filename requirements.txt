@@ -3,3 +3,4 @@ colorama
 shellingham
 pytest
 fireREST
+openpyxl
