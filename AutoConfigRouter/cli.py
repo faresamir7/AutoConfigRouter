@@ -5,8 +5,10 @@ from typing import Optional
 from pathlib import Path
 from openpyxl import load_workbook
 
-import openpyxl 
+import openpyxl
 import typer
+import autoconfigrouter
+
 
 from AutoConfigRouter import __app_name__, __version__, ERRORS, config
 
