@@ -1,12 +1,35 @@
 from asyncio.windows_events import NULL
+import json
 from logging import exception
+from urllib import request
 from fireREST import FMC
 
-from AutoConfigRouter import CONNECTION_ERROR
+from AutoConfigRouter import CONNECTION_ERROR, CREDENTIAL_ERROR, SESSION_ERROR
 
-fmc = FMC("192.168.1.1","cisco","cisco","Global")
+#fmc = FMC("192.168.1.1","cisco","cisco","Global")
+client = request.session()
 
-def getRule():
+def addRulesCisco(ruleset, login, passwd, ip_addr):
+    fmc = FMC(ip_addr,login,passwd,"Global")
+    for x in ruleset:
+        rule = {
+            'interface': x[0],
+            'action': x[1],
+            'source': x[2],
+            'user': x[3],
+            'securitygroup': x[4],
+            'destination' : x[5],
+            'securitygroup': x[6],
+            'service': x[7],
+            'description': x[8],
+            'logging': x[9],
+            'logginglevel': x[10],
+        }
+        addRuleCisco(rule)
+
+
+
+def getRuleCisco(fmc):
     try:
         if(fmc!=NULL):
             ruleset = fmc.policy.accesspolicy.get()
@@ -17,7 +40,7 @@ def getRule():
         return CONNECTION_ERROR
             
 
-def addRule(rule):
+def addRuleCisco(rule,fmc):
     try:
         if(fmc!=NULL):
             print(fmc.policy.accesspolicy.create(rule))
@@ -25,3 +48,18 @@ def addRule(rule):
             raise Exception
     except Exception:
         return CONNECTION_ERROR
+
+
+def getRulesFortigate(headers, url, customerID):
+    try:
+        #Policies request
+        url_cust_req=url+"/customers/"+customerID+"/policyobjects"
+        r = client.get(url_cust_req, headers=headers, verify=False)
+        
+        if(r == NULL):
+            raise Exception
+        else:
+            print(r)
+    except Exception:
+        return SESSION_ERROR
+    
