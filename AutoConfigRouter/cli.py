@@ -56,9 +56,7 @@ def upload(
             elif(data.value != 'None' and j<=ws.max_column+1):
                 rule.append(None)
         ruleset.append(rule.copy())
-    print(ruleset)
-    
-    #AutoConfigRouter.autoconfigrouter.addRulesCisco(ruleset,login,password,ip_address)
+    AutoConfigRouter.autoconfigrouter.addRulesCisco(ruleset,login,password,ip_address)
 
 @app.command()
 def validate(

@@ -1,9 +1,5 @@
-from asyncio.windows_events import NULL
-import json
 from logging import exception
-from urllib import request
 from fireREST import FMC
-
 from AutoConfigRouter import CONNECTION_ERROR, CREDENTIAL_ERROR, SESSION_ERROR
 
 #client = request.session()
@@ -27,10 +23,9 @@ def addRulesCisco(ruleset, login, passwd, ip_addr):
         addRuleCisco(rule)
 
 
-
 def getRuleCisco(fmc):
     try:
-        if(fmc!=NULL):
+        if(fmc!=None):
             ruleset = fmc.policy.accesspolicy.get()
             print(ruleset)
         else:
@@ -41,7 +36,7 @@ def getRuleCisco(fmc):
 
 def addRuleCisco(rule,fmc):
     try:
-        if(fmc!=NULL):
+        if(fmc!=None):
             print(fmc.policy.accesspolicy.create(rule))
         else:
             raise Exception
@@ -55,7 +50,7 @@ def getRulesFortigate(headers, url, customerID):
         url_cust_req=url+"/customers/"+customerID+"/policyobjects"
         r = client.get(url_cust_req, headers=headers, verify=False)
         
-        if(r == NULL):
+        if(r == None):
             raise Exception
         else:
             print(r)
