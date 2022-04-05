@@ -45,12 +45,20 @@ def upload(
     wb = openpyxl.Workbook()
     wb = load_workbook(filename = file, read_only=1)
     ws = wb.active
-    w, h = ws.max_row, ws.max_column
-    ruleset = [[0 for x in range(w)] for y in range(h)]
+    ruleset = []
+    rule = []
     for i in range(2, ws.max_row+1):
+        rule.clear()
         for j in range(1, ws.max_column+1):
-            ruleset[i][j] = ws.cell(row=i, column=j)            
-    AutoConfigRouter.autoconfigrouter.addRulesCisco(ruleset,login,password,ip_address)
+            data = ws.cell(row=i, column=j)
+            if(data.value != 'None'):
+                rule.append(data.value)
+            elif(data.value != 'None' and j<=ws.max_column+1):
+                rule.append(None)
+        ruleset.append(rule.copy())
+    print(ruleset)
+    
+    #AutoConfigRouter.autoconfigrouter.addRulesCisco(ruleset,login,password,ip_address)
 
 @app.command()
 def validate(

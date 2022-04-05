@@ -6,8 +6,7 @@ from fireREST import FMC
 
 from AutoConfigRouter import CONNECTION_ERROR, CREDENTIAL_ERROR, SESSION_ERROR
 
-#fmc = FMC("192.168.1.1","cisco","cisco","Global")
-client = request.session()
+#client = request.session()
 
 def addRulesCisco(ruleset, login, passwd, ip_addr):
     fmc = FMC(ip_addr,login,passwd,"Global")
