@@ -15,7 +15,7 @@ from AutoConfigRouter import __app_name__, __version__, ERRORS, config
 app = typer.Typer()
 
 @app.command()
-def upload(
+def uploadCisco(
     ip_address: str = typer.Option(
         "192.168.1.1",
         "--ip-address",
@@ -41,7 +41,7 @@ def upload(
         prompt="Set file location:",
     ),
 ) -> None:
-    """Initialize the connection phase."""
+    """Upload rulesets from an excel file to a Cisco FMC."""
     wb = openpyxl.Workbook()
     wb = load_workbook(filename = file, read_only=1)
     ws = wb.active
@@ -59,6 +59,62 @@ def upload(
     AutoConfigRouter.autoconfigrouter.addRulesCisco(ruleset,login,password,ip_address)
 
 @app.command()
+def uploadForti(
+    ip_address: str = typer.Option(
+        "192.168.1.1",
+        "--ip-address",
+        "-ip",
+        prompt="Set ip address:",
+    ),
+    api_key: str = typer.Option(
+        "gHmt8z6rx49Qy58Q9mkNqn377jxmH8",
+        "--key",
+        "-k",
+        prompt="Set API-User Key:",
+    ),
+    file: str = typer.Option(
+        r"C:\Users\User\Documents\spreadsheet.xlsx",
+        "--file",
+        "-f",
+        prompt="Set file location:",
+    ),
+) -> None:
+    """Upload a rule to a Fortinet firewall."""
+    wb = openpyxl.Workbook()
+    wb = load_workbook(filename = file, read_only=1)
+    ws = wb.active
+    ruleset = []
+    rule = []
+    for i in range(2, ws.max_row+1):
+        rule.clear()
+        for j in range(1, ws.max_column+1):
+            data = ws.cell(row=i, column=j)
+            if(data.value != 'None'):
+                rule.append(data.value)
+            elif(data.value != 'None' and j<=ws.max_column+1):
+                rule.append(None)
+        ruleset.append(rule.copy())
+    #TODO make a create function for Fortinet in spare time
+
+@app.command()
+def getForti(
+    ip_addr: str = typer.Option(
+        "192.168.1.1",
+        "--ip-address",
+        "-ip",
+        prompt="Set ip address:",
+    ),
+    api_key: str = typer.Option(
+        "gHmt8z6rx49Qy58Q9mkNqn377jxmH8",
+        "--key",
+        "-k",
+        prompt="Set API-User Key:",
+    ),
+) -> None:
+    """Get the rules from a fortinet firewall."""
+    AutoConfigRouter.autoconfigrouter.getRulesFortigate(ip_addr,api_key)
+
+@app.command()
 def validate(
     document_path: str = typer.Option(
         r"C:\Users\User\Documents\spreadsheet.xlsx",
@@ -67,7 +123,7 @@ def validate(
         prompt="Select valid document to read ruleset from:",
     ),
 ) -> None:
-    """Acquire rulesets."""
+    """Read rules from an excel file."""
     wb = openpyxl.Workbook()
     wb = load_workbook(filename = document_path, read_only=1)
     ws = wb.active

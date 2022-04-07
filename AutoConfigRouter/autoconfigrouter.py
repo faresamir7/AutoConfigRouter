@@ -1,6 +1,7 @@
 from logging import exception
 from fireREST import FMC
 from AutoConfigRouter import CONNECTION_ERROR, CREDENTIAL_ERROR, SESSION_ERROR
+import requests
 
 #client = request.session()
 
@@ -20,35 +21,18 @@ def addRulesCisco(ruleset, login, passwd, ip_addr):
             'logging': x[9],
             'logginglevel': x[10],
         }
-        addRuleCisco(rule)
+        fmc.policy.accesspolicy.create(data=rule)
+
+def getRulesCisco(login, passwd, ip_addr):
+    fmc = FMC(ip_addr, login, passwd,"Global")
+    print(fmc.policy.accesspolicy.get())            
 
 
-def getRuleCisco(fmc):
-    try:
-        if(fmc!=None):
-            ruleset = fmc.policy.accesspolicy.get()
-            print(ruleset)
-        else:
-            raise Exception
-    except Exception:
-        return CONNECTION_ERROR
-            
-
-def addRuleCisco(rule,fmc):
-    try:
-        if(fmc!=None):
-            print(fmc.policy.accesspolicy.create(rule))
-        else:
-            raise Exception
-    except Exception:
-        return CONNECTION_ERROR
-
-
-def getRulesFortigate(headers, url, customerID):
+def getRulesFortigate(url, api_key):
     try:
         #Policies request
-        url_cust_req=url+"/customers/"+customerID+"/policyobjects"
-        r = client.get(url_cust_req, headers=headers, verify=False)
+        url_cust_req="http://"+url+"/api/v2/cmdb/firewall/policy?access_token="+api_key
+        r = requests.get(url=url_cust_req, headers="Authorization: Bearer "+api_key, verify=False)
         
         if(r == None):
             raise Exception
